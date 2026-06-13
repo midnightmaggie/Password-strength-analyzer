@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Security Password Analyzer</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#0d1117;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:500px;
+    background:#161b22;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    color:#00ffff;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.analyze{
+    background:#00b894;
+    color:white;
+}
+
+.generate{
+    background:#0984e3;
+    color:white;
+}
+
+.toggle{
+    background:#6c5ce7;
+    color:white;
+}
+
+.bar{
+    width:100%;
+    height:20px;
+    background:#333;
+    border-radius:10px;
+    margin-top:15px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    width:0%;
+    transition:0.5s;
+}
+
+#result{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#tips{
+    margin-top:15px;
+}
+
+li{
+    margin-left:20px;
+    margin-top:5px;
+}
+
+.warning{
+    color:red;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.success{
+    color:#00ff99;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Password Strength Analyzer</h1>
+
+<input type="password" id="password" placeholder="Enter Password">
+
+<button class="toggle" onclick="togglePassword()">
+Show / Hide Password
+</button>
+
+<button class="analyze" onclick="analyzePassword()">
+Analyze Password
+</button>
+
+<button class="generate" onclick="generatePassword()">
+Generate Secure Password
+</button>
+
+<div class="bar">
+<div class="fill" id="fill"></div>
+</div>
+
+<div id="result"></div>
+
+<div id="warning"></div>
+
+<div id="tips"></div>
+
+</div>
+
+<script>
+
+const commonPasswords = [
+"123456",
+"password",
+"admin",
+"qwerty",
+"welcome",
+"12345678",
+"abc123"
+];
+
+function analyzePassword(){
+
+let password = document.getElementById("password").value;
+
+let score = 0;
+let tips = [];
+
+if(password.length >= 8)
+score++;
+else
+tips.push("Use at least 8 characters");
+
+if(/[A-Z]/.test(password))
+score++;
+else
+tips.push("Add uppercase letters");
+
+if(/[a-z]/.test(password))
+score++;
+else
+tips.push("Add lowercase letters");
+
+if(/[0-9]/.test(password))
+score++;
+else
+tips.push("Add numbers");
+
+if(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password))
+score++;
+else
+tips.push("Add special characters");
+
+let fill = document.getElementById("fill");
+let result = document.getElementById("result");
+let warning = document.getElementById("warning");
+let tipsDiv = document.getElementById("tips");
+
+warning.innerHTML="";
+
+if(commonPasswords.includes(password.toLowerCase())){
+warning.innerHTML =
+"<p class='warning'>⚠ Common password detected! High Security Risk.</p>";
+}
+
+if(score <= 2){
+
+fill.style.width="30%";
+fill.style.background="red";
+result.innerHTML="Strength: Weak";
+
+}
+else if(score <=4){
+
+fill.style.width="70%";
+fill.style.background="orange";
+result.innerHTML="Strength: Medium";
+
+}
+else{
+
+fill.style.width="100%";
+fill.style.background="limegreen";
+result.innerHTML="Strength: Strong";
+
+}
+
+let html="<h3>Security Recommendations</h3><ul>";
+
+tips.forEach(t=>{
+html+="<li>"+t+"</li>";
+});
+
+html+="</ul>";
+
+if(tips.length===0){
+html="<p class='success'>✔ Excellent Password Security</p>";
+}
+
+tipsDiv.innerHTML=html;
+}
+
+function generatePassword(){
+
+const chars =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
+let password="";
+
+for(let i=0;i<14;i++){
+
+password += chars.charAt(
+Math.floor(Math.random()*chars.length)
+);
+
+}
+
+document.getElementById("password").value=password;
+
+analyzePassword();
+}
+
+function togglePassword(){
+
+let pass=document.getElementById("password");
+
+if(pass.type==="password")
+pass.type="text";
+else
+pass.type="password";
+}
+
+</script>
+
+</body>
+</html>
